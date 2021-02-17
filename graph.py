@@ -110,7 +110,7 @@ class Graph() :
                     been_there[edge.dest] = True
             node = q.get()
 
-        items += str(endNode) + ", "
+        items += str(endNode) + ","
         print("The BFS", items)
         return items
 
@@ -118,31 +118,32 @@ class Graph() :
     ### return a list of Nodes that indicates the path from start to finish, using depth-first search.
 
 
-    def depthFirstSearch(self, startNode, endNode):
-        been_there = [False] * (max(self.nodeTable) + 1)
-        stack = deque()
-        been_there[startNode]=True
-        node = startNode
-        items = ""
-        while node != endNode:
-            items += str(node) + ", "
+    def dfs(self, startNode, endNode, been_there, items):
+        been_there.append(startNode)
+        items += str(startNode)
 
-            # print("node", node)
-            if node not in self.edgeMap:
-                node = stack.pop()
-                continue
-            edges = self.edgeMap.get(node)
+        if startNode >= (max(self.nodeTable)):
+            return items
 
-            for edge in edges:
-                # print(edge)
-                if not been_there[edge.dest]:
-                    stack.append(edge.dest)
-                    been_there[edge.dest] = True
-            node = stack.pop()
-
-        items += str(endNode) + ", "
-        print("The DFS", items)
+        if startNode not in self.edgeMap:
+            return
+        for next_one in self.edgeMap[startNode]:
+            if next_one.dest not in been_there:
+                self.dfs(next_one.dest, endNode, been_there, items)
         return items
+
+
+    def depthFirstSearch(self, startNode, endNode):
+        endNode = -1
+        been_there = [False] * (max(self.nodeTable) + 1)
+        items = []
+        dfs_output = self.dfs(startNode, endNode, been_there, items)
+        if endNode < 0:
+            final_index = len(dfs_output)
+        else:
+            final_index = dfs_output.index(endNode)
+        print(items)
+        return dfs_output[:final_index]
 
     ### implement Djikstra's all-pairs shortest-path algorithm.
     ### https://yourbasic.org/algorithms/graph/#dijkstra-s-algorithm
